@@ -355,8 +355,8 @@ button { -webkit-appearance: none; cursor: pointer; }
   top: 0; left: 0; right: 0;
   z-index: 9999;
   background: #f0f4f8;
-  display:flex; align-items:center; justify-content:space-between;
-  padding:8px 11px;
+  display:flex; align-items:center; justify-content:space-between; gap:6px;
+  padding:7px 9px;
   border-bottom: 2px solid var(--border);
   box-shadow: 0 4px 20px rgba(26,53,96,0.12);
 }
@@ -372,6 +372,16 @@ button { -webkit-appearance: none; cursor: pointer; }
 .brand-owner { font-size:11.2px; color:#1e3a5f; font-weight:700; letter-spacing:.3px; white-space:nowrap; }
 .topbar-right { display:flex; align-items:center; gap:10px; }
 .topbar-date { font-size:11.2px; color:#4a6fa5; letter-spacing:.3px; font-weight:600; }
+
+/* Compact the top bar so every button (including the ☰ menu) always fits
+   within the screen and is never clipped. (Rozer) */
+#mainTopbar { padding: 6px 8px; gap: 4px; }
+#mainTopbar .brand { min-width: 0; overflow: hidden; }
+#mainTopbar .brand-owner { overflow: hidden; text-overflow: ellipsis; }
+#mainTopbar .topbar-right { gap: 6px; min-width: 0; }
+#mainTopbar .topbar-actions { gap: 4px; flex-shrink: 0; }
+#mainTopbar .icon-btn { padding: 6px 7px; border-radius: 11px; }
+#mainTopbar .icon-btn svg { width: 22px; height: 22px; }
 .lock-btn {
   background:none; border:1px solid var(--border); border-radius:8px;
   padding:5px 8px; cursor:pointer; color:var(--muted);
@@ -9240,10 +9250,14 @@ function swapQuickAmt(n) {
 <script>
 window.__appZoom = parseFloat(localStorage.getItem('bankdb_zoom')) || 1;
 function applyAppZoom() {
+  const z = window.__appZoom;
   const app = document.getElementById('mainApp');
-  if (app) app.style.zoom = window.__appZoom;
+  if (app) app.style.zoom = z;
+  // Scale the top bar's CONTENT too (not the bar box itself, so the bar keeps
+  // full width and its buttons shrink to fit alongside the rest of the app).
+  document.querySelectorAll('#mainTopbar > .brand, #mainTopbar > .topbar-right').forEach(el => { el.style.zoom = z; });
   const lbl = document.getElementById('zoomVal');
-  if (lbl) lbl.textContent = Math.round(window.__appZoom * 100) + '%';
+  if (lbl) lbl.textContent = Math.round(z * 100) + '%';
   try { adjustWrapPadding(); } catch(e) {}
 }
 function changeAppZoom(dir) {
