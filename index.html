@@ -2963,12 +2963,15 @@ function adjustWrapPadding() {
   const topbar = document.getElementById('mainTopbar');
   const wrap = document.getElementById('mainApp');
   if (!topbar || !wrap) return;
-  const tb = topbar.offsetHeight || 56;
-  wrap.style.paddingTop = tb + 'px';
+  const tb = topbar.offsetHeight || 56;   // topbar is NOT zoomed, so this is its true height
+  const Z = window.__appZoom || 1;         // current app zoom (1 = 100%)
+  // #mainApp is zoomed by Z, so values set inside it render at ×Z.
+  // Divide by Z so they render at the intended pixel size.
+  wrap.style.paddingTop = (tb / Z) + 'px';
   // Size the dashboard to fill the space below the topbar, so its header
   // stays put and only the history scrolls inside it.
   const dash = document.getElementById('page-dashboard');
-  if (dash) dash.style.height = (window.innerHeight - tb) + 'px';
+  if (dash) dash.style.height = ((window.innerHeight - tb) / Z) + 'px';
   const scrollContent = document.querySelector('#page-dashboard .scroll-content');
   if (scrollContent) scrollContent.style.paddingTop = '';
 }
@@ -9221,6 +9224,41 @@ function swapQuickAmt(n) {
     swapCalc();
   }
 }
+</script>
+<!-- ══════════════════════════════════
+     SIZE / ZOOM CONTROL (Rozer)
+     A floating − / % / + control that scales the whole app to the size
+     Rozer prefers, and remembers the choice across sessions. It zooms
+     #mainApp only (the topbar stays a stable size), and the control
+     itself sits outside #mainApp so it never shrinks.
+     ══════════════════════════════════ -->
+<div id="zoomCtl" style="position:fixed; z-index:8000; left:12px; bottom:calc(14px + env(safe-area-inset-bottom,0px)); display:flex; align-items:center; gap:3px; background:rgba(30,58,95,0.92); border-radius:24px; padding:4px 6px; box-shadow:0 4px 16px rgba(0,0,0,0.32); font-family:'Plus Jakarta Sans',sans-serif; -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px);">
+  <button onclick="changeAppZoom(-1)" aria-label="Smaller" style="width:36px;height:36px;border:none;background:rgba(255,255,255,0.16);color:#fff;border-radius:50%;font-size:22px;font-weight:700;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent;">−</button>
+  <span id="zoomVal" onclick="resetAppZoom()" style="color:#fff;font-size:12px;font-weight:700;min-width:40px;text-align:center;cursor:pointer;">100%</span>
+  <button onclick="changeAppZoom(1)" aria-label="Bigger" style="width:36px;height:36px;border:none;background:rgba(255,255,255,0.16);color:#fff;border-radius:50%;font-size:22px;font-weight:700;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent;">+</button>
+</div>
+<script>
+window.__appZoom = parseFloat(localStorage.getItem('bankdb_zoom')) || 1;
+function applyAppZoom() {
+  const app = document.getElementById('mainApp');
+  if (app) app.style.zoom = window.__appZoom;
+  const lbl = document.getElementById('zoomVal');
+  if (lbl) lbl.textContent = Math.round(window.__appZoom * 100) + '%';
+  try { adjustWrapPadding(); } catch(e) {}
+}
+function changeAppZoom(dir) {
+  let z = (window.__appZoom || 1) + dir * 0.1;
+  z = Math.min(1.2, Math.max(0.6, Math.round(z * 10) / 10));
+  window.__appZoom = z;
+  try { localStorage.setItem('bankdb_zoom', z); } catch(e) {}
+  applyAppZoom();
+}
+function resetAppZoom() {   // tap the % to reset to 100%
+  window.__appZoom = 1;
+  try { localStorage.setItem('bankdb_zoom', 1); } catch(e) {}
+  applyAppZoom();
+}
+window.addEventListener('load', () => { try { applyAppZoom(); } catch(e) {} });
 </script>
 </body>
 </html>
