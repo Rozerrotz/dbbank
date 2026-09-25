@@ -9249,7 +9249,7 @@ function swapQuickAmt(n) {
      #mainApp only (the topbar stays a stable size), and the control
      itself sits outside #mainApp so it never shrinks.
      ══════════════════════════════════ -->
-<div id="zoomCtl" style="position:fixed; z-index:8000; left:12px; bottom:calc(14px + env(safe-area-inset-bottom,0px)); display:flex; align-items:center; gap:3px; background:rgba(30,58,95,0.92); border-radius:24px; padding:4px 6px; box-shadow:0 4px 16px rgba(0,0,0,0.32); font-family:'Plus Jakarta Sans',sans-serif; -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px);">
+<div id="zoomCtl" style="position:fixed; z-index:10500; left:12px; bottom:calc(14px + env(safe-area-inset-bottom,0px)); display:flex; align-items:center; gap:3px; background:rgba(30,58,95,0.92); border-radius:24px; padding:4px 6px; box-shadow:0 4px 16px rgba(0,0,0,0.32); font-family:'Plus Jakarta Sans',sans-serif; -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px);">
   <button onclick="changeAppZoom(-1)" aria-label="Smaller" style="width:36px;height:36px;border:none;background:rgba(255,255,255,0.16);color:#fff;border-radius:50%;font-size:22px;font-weight:700;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent;">−</button>
   <span id="zoomVal" onclick="resetAppZoom()" style="color:#fff;font-size:12px;font-weight:700;min-width:40px;text-align:center;cursor:pointer;">100%</span>
   <button onclick="changeAppZoom(1)" aria-label="Bigger" style="width:36px;height:36px;border:none;background:rgba(255,255,255,0.16);color:#fff;border-radius:50%;font-size:22px;font-weight:700;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent;">+</button>
